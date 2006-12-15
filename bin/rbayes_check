@@ -1,0 +1,42 @@
+#!/usr/local/bin/ruby
+#
+# check.rb - part of rbayes
+# Dan Peterson <danp@danp.net>
+# you can do whatever you want with this file but i appreciate credit
+#
+# given a message on stdin, find tokens and determine the message's spam
+# probability based on token ratings as described at
+# http://www.paulgraham.com/spam.html
+#
+# options:
+# -c  turn on case sensitivity (default: off)
+# -d  debug
+# -f  database file
+#
+
+require 'getoptlong'
+require 'rbayes'
+
+case_sensitive = false
+debug = false
+dbfile = nil
+
+opts = GetoptLong.new(
+  ['-c', GetoptLong::NO_ARGUMENT],
+  ['-d', GetoptLong::NO_ARGUMENT],
+  ['-f', GetoptLong::REQUIRED_ARGUMENT]
+)
+
+opts.each do |opt, arg|
+  case opt
+  when '-c' then case_sensitive = true
+  when '-d' then debug = true
+  when '-f' then dbfile = arg
+  end
+end
+
+rbayes = RBayes.new dbfile, case_sensitive, debug
+prob = rbayes.rate $stdin.read
+
+puts '%0.4f' % prob
+

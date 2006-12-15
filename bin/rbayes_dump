@@ -1,0 +1,27 @@
+#!/usr/local/bin/ruby
+#
+# dump.rb - part of rbayes
+# Dan Peterson <danp@danp.net>
+# you can do whatever you want with this file but i appreciate credit
+#
+# prints token information for each token in the database used by gen.rb and
+# check.rb
+#
+
+require 'rbayes'
+
+rb = RBayes.new ARGV.shift
+
+count_bland = rb.count_bland
+count_tasty = rb.count_tasty
+
+length = [count_bland, count_tasty].map { |c| c.to_s.length }.max
+
+puts "%#{length}d tasty tokens" % count_tasty
+puts "%#{length}d bland tokens" % count_bland
+
+rb.database.each do |token, value|
+  next if token =~ /^\s/
+  puts "rating = %0.4f (#{token}: #{value})" % [rb.rate_token(token)]
+end
+

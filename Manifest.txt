@@ -1,0 +1,7 @@
+CHANGES.txt
+Manifest.txt
+README.txt
+Rakefile
+bin/rbayes_check
+bin/rbayes_dump
+lib/rbayes.rb
