@@ -1,21 +1,43 @@
 #!/usr/bin/env ruby -w
 
+require 'bdb1'
+
 # Dan Peterson <danp@danp.net>
 # you can do whatever you want with this file but i appreciate credit
 #
 # Refactored by Eric Hodel <drbrain@segment7.net>
 
-require 'bdb1'
-
 class RBayes
 
+  ##
+  # The version of RBayes you are using.
+
+  VERSION = '1.0.0'
+
+  # :stopdoc:
   COUNT_BLAND = " count_bland "
   COUNT_TASTY = " count_tasty "
+  # :startdoc:
+
+  ##
+  # Bland tokens
 
   attr_reader :count_bland
+
+  ##
+  # Tasty tokens
+
   attr_reader :count_tasty
 
+  ##
+  # The BDB1 DB holding the token information.
+
   attr_reader :database
+
+  ##
+  # Creates a new RBayes object using the database +token_file+.  If +test+ is
+  # true no writes are performed.  If +debug+ is true stuff gets logged to
+  # $stderr.  +case_sensitive+ should be obvious.
 
   def initialize(token_file, case_sensitive = false, test = false,
                  debug = false)
@@ -31,9 +53,15 @@ class RBayes
     log "ham tokens: #{@count_tasty} bland tokens: #{@count_bland}"
   end
 
+  ##
+  # Logs +s+ to $stderr if debugging is on.
+
   def log(s)
     $stderr.puts s if @debug
   end
+
+  ##
+  # Yields tokens in +message+ ignoring the boring headers and such.
 
   def read_tokens_in(message)
     message.split($/).each do |line|
@@ -53,14 +81,17 @@ class RBayes
       line.downcase! unless @case_sensitive
 
       #log "Tokenizing #{line.inspect}"
-      line.split(/(?:[^\w.?'@:$\/+-]+)/).each do |tok|
-        next if tok.length < 3
-        next if tok =~ /^\d+$/
+      line.split(/(?:[^\w.?'@:$\/+-]+)/).each do |token|
+        next if token.length < 3
+        next if token =~ /^\d+$/
 
-        yield tok
+        yield token
       end
     end
   end
+
+  ##
+  # Returns a Hash mapping tokens to the number of occurances in +message+.
 
   def count_tokens_in(message)
     counts = Hash.new 0
@@ -71,6 +102,9 @@ class RBayes
 
     return counts
   end
+
+  ##
+  # Rates +message+ as tasty or bland.
 
   def rate(message)
     ratings = {}
@@ -96,9 +130,19 @@ class RBayes
     return p / (p + m1p)
   end
 
+  ##
+  # Updates the database with tokens from +message+.
+  #
+  # +mode+ may be:
+  #
+  # <tt>:add_bland</tt>:: increases tastiness of found tokens
+  # <tt>:add_tasty</tt>:: increases tastiness of found tokens
+  # <tt>:remove_bland</tt>:: decreases blandness of found tokens
+  # <tt>:remove_tasty</tt>:: decreases tastiness of found tokens
+
   def update_db_with(message, mode)
     unless [:add_bland, :remove_bland, :add_tasty, :remove_tasty].include? mode
-      raise "Invalid mode"
+      raise ArgumentError, 'invalid mode'
     end
     log "updating db: #{mode}"
 
@@ -150,6 +194,9 @@ class RBayes
     end
   end
  
+  ##
+  # Rates token +tok+ for tastiness.  Returns a probability between 0 and 1.
+
   def rate_token(tok)
     tnum, bnum = (@database[tok] || "0 0").split(/\s+/)
     tnum, bnum = tnum.to_i, bnum.to_i

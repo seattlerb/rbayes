@@ -1,4 +1,4 @@
-CHANGES.txt
+History.txt
 Manifest.txt
 README.txt
 Rakefile

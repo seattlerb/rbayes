@@ -1,3 +1,5 @@
-= 1.0.0
+= 1.0.0 / 2007-01-06
 
-Birthday!
+* Birthday!
+* Fully refactored from Dan Peterson's original to be in a single class.
+
