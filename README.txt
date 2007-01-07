@@ -12,7 +12,9 @@ into a single class.
 
 == Installing rbayes
 
-Just install the gem:
+Install BDB1 from http://moulon.inra.fr/ruby/bdb1.html
+
+Then install the gem:
 
   $ sudo gem install rbayes
 
