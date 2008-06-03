@@ -1,7 +1,5 @@
 #!/usr/bin/env ruby -w
 
-require 'bdb1'
-
 # Dan Peterson <danp@danp.net>
 # you can do whatever you want with this file but i appreciate credit
 #
@@ -45,7 +43,7 @@ class RBayes
     @test = test
     @debug = debug
 
-    @database = BDB1::Hash.open token_file, 'a+'
+    @database = DBM.open token_file, 'a+'
 
     @count_tasty = @database[COUNT_TASTY].to_i || 0
     @count_bland = @database[COUNT_BLAND].to_i || 0
