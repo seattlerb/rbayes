@@ -9,7 +9,4 @@ Hoe.new 'rbayes', RBayes::VERSION do |p|
   p.email = 'drbrain@segment7.net'
   p.url = 'http://seattlerb.rubyforge.org/rbayes/'
   p.changes = File.read('History.txt').scan(/\A(=.*?)(=|\Z)/m).first.first
-
-  p.rubyforge_name = 'seattlerb'
 end
-
